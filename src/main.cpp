@@ -22,5 +22,13 @@ int main() {
 
     runSJF(processes);
 
-    return 0;
+   //again for srtf calcs
+
+   for (auto& p : processes)
+        p.completionTime = p.turnaroundTime = p.waitingTime = 0;
+
+   runSRTF(processes);
+
+
+   return 0;
 }

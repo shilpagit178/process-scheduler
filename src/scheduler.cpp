@@ -145,3 +145,92 @@ void runSJF(std::vector<Process>& processes) {
     std::cout << "\nAverage Turnaround Time : "
               << totalTAT / n << "\n";
 }
+
+void runSRTF(std::vector<Process>& processes) {
+    std::cout << "\nSRTF Scheduling (Preemptive)\n";
+    std::cout << "---------------------------\n";
+
+    int n = processes.size();
+    std::vector<int> remainingTime(n);
+    std::vector<bool> finished(n, false);
+    std::vector<ExecutionSlice> timeline;
+
+    for (int i = 0; i < n; i++) {
+        remainingTime[i] = processes[i].burstTime;
+    }
+
+    int currentTime = 0;
+    int completed = 0;
+    int lastPid = -1;
+
+    std::cout << "\nExecution Trace\n";
+
+    while (completed < n) {
+        int idx = -1;
+        int minRemaining = 1e9;
+
+        for (int i = 0; i < n; i++) {
+            if (!finished[i] &&
+                processes[i].arrivalTime <= currentTime &&
+                remainingTime[i] < minRemaining &&
+                remainingTime[i] > 0) {
+
+                minRemaining = remainingTime[i];
+                idx = i;
+            }
+        }
+
+        if (idx == -1) {
+            currentTime++;
+            continue;
+        }
+
+        if (timeline.empty() || timeline.back().pid != processes[idx].pid) {
+            timeline.push_back({processes[idx].pid, currentTime, currentTime + 1});
+        } else {
+            timeline.back().endTime++;
+        }
+
+        std::cout << "Time " << currentTime << " -> " << currentTime + 1
+                  << " : P" << processes[idx].pid << "\n";
+
+        remainingTime[idx]--;
+        currentTime++;
+
+        if (remainingTime[idx] == 0) {
+            finished[idx] = true;
+            completed++;
+
+            processes[idx].completionTime = currentTime;
+            processes[idx].turnaroundTime =
+                processes[idx].completionTime - processes[idx].arrivalTime;
+            processes[idx].waitingTime =
+                processes[idx].turnaroundTime - processes[idx].burstTime;
+        }
+    }
+
+    std::cout << "\nGantt Chart\n|";
+    for (const auto& slice : timeline) {
+        std::cout << "  P" << slice.pid << "  |";
+    }
+    std::cout << "\n";
+
+    std::cout << timeline[0].startTime;
+    for (const auto& slice : timeline) {
+        std::cout << "      " << slice.endTime;
+    }
+    std::cout << "\n";
+
+    printProcessTable(processes);
+
+    float totalWT = 0, totalTAT = 0;
+    for (const auto& p : processes) {
+        totalWT += p.waitingTime;
+        totalTAT += p.turnaroundTime;
+    }
+
+    std::cout << "\nAverage Waiting Time    : "
+              << totalWT / n;
+    std::cout << "\nAverage Turnaround Time : "
+              << totalTAT / n << "\n";
+}
