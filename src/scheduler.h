@@ -9,4 +9,5 @@ struct ExecutionSlice {
 };
 void printProcessTable(const std::vector<Process>& processes);
 void runFCFS(std::vector<Process>& processes);
+void runSJF(std::vector<Process>& processes);
 #endif
