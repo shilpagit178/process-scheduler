@@ -55,8 +55,7 @@ process-scheduler/
 │   ├── scheduler.cpp
 │   ├── scheduler.h
 │   └── process.h
-
----
+```
 
 ## How to Compile and Run
 
