@@ -1,130 +1,60 @@
 # CPU Scheduling Simulator (C++)
 
 This project is a terminal-based CPU scheduling simulator implemented in C++.  
-It was developed to understand and compare how different CPU scheduling algorithms behave when applied to the same set of processes.
+It is built to understand and compare how different CPU scheduling algorithms behave when applied to the same set of processes.
 
-The program executes multiple scheduling algorithms in a single run and allows direct comparison of their execution order, waiting time, and turnaround time.
+The program executes multiple scheduling algorithms in a single run so that their execution order, waiting time, and turnaround time can be compared directly.
 
----
+## Scheduling Algorithms Implemented
 
-## Scheduling Algorithms
+The simulator implements the following CPU scheduling algorithms:
 
-The following CPU scheduling algorithms are implemented:
+* **FCFS (First Come First Serve – Non-Preemptive)**  
+  Processes are executed strictly in the order in which they arrive and are not interrupted once execution starts.
 
-- **FCFS (First Come First Serve - Non-Preemptive)**  
-  Processes are executed strictly in the order in which they arrive.
+* **SJF (Shortest Job First – Non-Preemptive)**  
+  From the available processes, the one with the smallest burst time is selected and executed until completion.
 
-- **SJF (Shortest Job First – Non-Preemptive)**  
-  From the available processes, the one with the smallest burst time is selected and executed till completion.
+* **SRTF (Shortest Remaining Time First – Preemptive)**  
+  At every time unit, the process with the shortest remaining burst time is chosen.  
+  The currently running process may be preempted if a shorter job arrives.
 
-- **SRTF (Shortest Remaining Time First – Preemptive)**  
-  At every unit of time, the process with the shortest remaining burst time is chosen.  
-  The currently running process can be preempted if a shorter job arrives.
-
-- **Round Robin (Preemptive - Time Quantum = 2)**  
+* **Round Robin (Preemptive – Time Quantum = 2)**  
   Each process is given a fixed CPU time slice of 2 units.  
   If the process does not complete within this time, it is placed back into the ready queue.
 
-All algorithms are executed on the same predefined process set for consistent comparison.
-
----
+All algorithms run on the same predefined process set to ensure consistent comparison.
 
 ## Process Model
 
 Each process is defined using:
-- Process ID (PID)
-- Arrival Time
-- Burst Time
+* Process ID (PID)
+* Arrival Time
+* Burst Time
 
-During scheduling, the simulator computes:
-- Completion Time
-- Turnaround Time
-- Waiting Time
+During execution, the simulator computes:
+* Completion Time (CT)
+* Turnaround Time (TAT = CT − Arrival Time)
+* Waiting Time (WT = TAT − Burst Time)
 
-These values are calculated after a process finishes execution, following standard operating systems formulas.
-
----
+These values follow standard operating system definitions.
 
 ## Scheduling Approach
 
-- Non-preemptive algorithms execute a process continuously once selected.
-- Preemptive algorithms are simulated one time unit at a time.
-- Execution is tracked using a timeline to correctly represent context switches and preemption.
-- Gantt charts are generated directly from the execution timeline to ensure accuracy.
-
-This approach ensures correct visualization and metric calculation for all scheduling policies.
-
----
+* Non-preemptive algorithms execute a process continuously once selected.
+* Preemptive algorithms are simulated one time unit at a time.
+* Execution is tracked using a timeline to correctly represent preemption and context switching.
+* Gantt charts are generated directly from the execution timeline to preserve correct ordering and timing.
 
 ## Project Structure
 
-# CPU Scheduling Simulator (C++)
-
-This project is a terminal-based CPU scheduling simulator implemented in C++.  
-It was developed to understand and compare how different CPU scheduling algorithms behave when applied to the same set of processes.
-
-The program executes multiple scheduling algorithms in a single run and allows direct comparison of their execution order, waiting time, and turnaround time.
-
----
-
-## Scheduling Algorithms
-
-The following CPU scheduling algorithms are implemented:
-
-- **FCFS (First Come First Serve)**  
-  Processes are executed strictly in the order in which they arrive.
-
-- **SJF (Shortest Job First – Non-Preemptive)**  
-  From the available processes, the one with the smallest burst time is selected and executed till completion.
-
-- **SRTF (Shortest Remaining Time First – Preemptive)**  
-  At every unit of time, the process with the shortest remaining burst time is chosen.  
-  The currently running process can be preempted if a shorter job arrives.
-
-- **Round Robin (Time Quantum = 2)**  
-  Each process is given a fixed CPU time slice of 2 units.  
-  If the process does not complete within this time, it is placed back into the ready queue.
-
-All algorithms are executed on the same predefined process set for consistent comparison.
-
----
-
-## Process Model
-
-Each process is defined using:
-- Process ID (PID)
-- Arrival Time
-- Burst Time
-
-During scheduling, the simulator computes:
-- Completion Time
-- Turnaround Time
-- Waiting Time
-
-These values are calculated after a process finishes execution, following standard operating systems formulas.
-
----
-
-## Scheduling Approach
-
-- Non-preemptive algorithms execute a process continuously once selected.
-- Preemptive algorithms are simulated one time unit at a time.
-- Execution is tracked using a timeline to correctly represent context switches and preemption.
-- Gantt charts are generated directly from the execution timeline to ensure accuracy.
-
-This approach ensures correct visualization and metric calculation for all scheduling policies.
-
----
-
-## Project Structure
-
+```text
 process-scheduler/
 ├── src/
-│ ├── main.cpp // Program entry point
-│ ├── scheduler.cpp // Scheduling algorithm implementations
-│ ├── scheduler.h // Scheduler declarations
-│ └── process.h // Process structure definition
-
+│   ├── main.cpp
+│   ├── scheduler.cpp
+│   ├── scheduler.h
+│   └── process.h
 
 ---
 
