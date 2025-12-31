@@ -12,4 +12,6 @@ void printProcessTable(const std::vector<Process>& processes);
 void runFCFS(std::vector<Process>& processes);
 void runSJF(std::vector<Process>& processes);
 void runSRTF(std::vector<Process>& processes);
+void runRoundRobin(std::vector<Process>& processes, int quantum);
+
 #endif

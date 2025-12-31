@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <queue>
 #include "scheduler.h"
 #include "process.h"
 
@@ -234,3 +235,115 @@ void runSRTF(std::vector<Process>& processes) {
     std::cout << "\nAverage Turnaround Time : "
               << totalTAT / n << "\n";
 }
+
+
+//code for round robbin where time quantum is 2
+void runRoundRobin(std::vector<Process>& processes, int quantum) {
+    std::cout << "\nRound Robin Scheduling (Quantum = "
+              << quantum << ")\n";
+    std::cout << "-------------------------------\n";
+
+    int n = processes.size();
+    std::vector<int> remainingTime(n);
+    std::vector<bool> inQueue(n, false);
+    std::queue<int> q;
+    std::vector<ExecutionSlice> timeline;
+
+    for (int i = 0; i < n; i++) {
+        remainingTime[i] = processes[i].burstTime;
+    }
+
+    int currentTime = 0;
+    int completed = 0;
+
+    std::cout << "\nExecution Trace\n";
+
+    // push processes that arrive at time 0
+    for (int i = 0; i < n; i++) {
+        if (processes[i].arrivalTime == 0) {
+            q.push(i);
+            inQueue[i] = true;
+        }
+    }
+
+    while (completed < n) {
+        if (q.empty()) {
+            currentTime++;
+            for (int i = 0; i < n; i++) {
+                if (!inQueue[i] &&
+                    processes[i].arrivalTime <= currentTime &&
+                    remainingTime[i] > 0) {
+
+                    q.push(i);
+                    inQueue[i] = true;
+                }
+            }
+            continue;
+        }
+
+        int idx = q.front();
+        q.pop();
+        inQueue[idx] = false;
+
+        int execTime = std::min(quantum, remainingTime[idx]);
+        int startTime = currentTime;
+        int endTime = currentTime + execTime;
+
+        timeline.push_back({processes[idx].pid, startTime, endTime});
+
+        std::cout << "Time " << startTime << " -> " << endTime
+                  << " : P" << processes[idx].pid << "\n";
+
+        currentTime = endTime;
+        remainingTime[idx] -= execTime;
+
+        for (int i = 0; i < n; i++) {
+            if (!inQueue[i] &&
+                processes[i].arrivalTime > startTime &&
+                processes[i].arrivalTime <= currentTime &&
+                remainingTime[i] > 0) {
+
+                q.push(i);
+                inQueue[i] = true;
+            }
+        }
+
+        if (remainingTime[idx] > 0) {
+            q.push(idx);
+            inQueue[idx] = true;
+        } else {
+            completed++;
+            processes[idx].completionTime = currentTime;
+            processes[idx].turnaroundTime =
+                currentTime - processes[idx].arrivalTime;
+            processes[idx].waitingTime =
+                processes[idx].turnaroundTime - processes[idx].burstTime;
+        }
+    }
+
+    std::cout << "\nGantt Chart\n|";
+    for (const auto& slice : timeline) {
+        std::cout << "  P" << slice.pid << "  |";
+    }
+    std::cout << "\n";
+
+    std::cout << timeline[0].startTime;
+    for (const auto& slice : timeline) {
+        std::cout << "      " << slice.endTime;
+    }
+    std::cout << "\n";
+
+    printProcessTable(processes);
+
+    float totalWT = 0, totalTAT = 0;
+    for (const auto& p : processes) {
+        totalWT += p.waitingTime;
+        totalTAT += p.turnaroundTime;
+    }
+
+    std::cout << "\nAverage Waiting Time    : "
+              << totalWT / n;
+    std::cout << "\nAverage Turnaround Time : "
+              << totalTAT / n << "\n";
+}
+

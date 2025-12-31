@@ -29,6 +29,10 @@ int main() {
 
    runSRTF(processes);
 
+   for (auto& p : processes)
+  	 p.completionTime = p.turnaroundTime = p.waitingTime = 0;
+
+   runRoundRobin(processes, 2);
 
    return 0;
 }
